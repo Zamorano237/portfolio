@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+
+  .animate-slide:hover {
+    animation-play-state: paused;
+  }
+}
