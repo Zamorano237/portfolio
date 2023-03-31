@@ -1,8 +1,13 @@
+/** @format */
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import "slick-carousel/slick/slick.css"; 
+import 'slick-carousel/slick/slick.css';
 import './index.css';
 import App from './App';
+import { disableReactDevTools } from '@fvilers/disable-react-devtools';
+
+if (process.env.NODE_ENV === 'production') disableReactDevTools();
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -10,4 +15,3 @@ root.render(
     <App />
   </React.StrictMode>
 );
-
