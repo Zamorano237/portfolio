@@ -1,88 +1,111 @@
 /** @format */
 
-import React, { useEffect, useState } from 'react';
-import './Navbar.scss';
-import { Link } from 'react-router-dom';
-import { setSidebarOn } from '../../store/sidebarSlice';
-import { useSelector, useDispatch } from 'react-redux';
-import { getAllCategories } from '../../store/categorySlice';
-import {
-  getAllCarts,
-  getCartItemsCount,
-  getCartTotal,
-} from '../../store/cartSlice';
-import CartModal from '../CartModal/CartModal';
+import React, { useState } from 'react';
+import { Link } from 'react-scroll';
+import { FiMenu } from 'react-icons/fi';
+import { MdClose } from 'react-icons/md';
+import { FaWhatsapp, FaYoutube, FaLinkedinIn } from 'react-icons/fa';
+import { logo } from '../../assets/index';
+import { navLinksdata } from '../../constants';
 
 const Navbar = () => {
-  const dispatch = useDispatch();
-  const categories = useSelector(getAllCategories);
-  const carts = useSelector(getAllCarts);
-  const itemsCount = useSelector(getCartItemsCount);
-  const [searchTerm, setSearchTerm] = useState('');
-
-  const handleSearchTerm = (e) => {
-    e.preventDefault();
-    setSearchTerm(e.target.value);
+  const handleIconClick = () => {
+    window.open('https://www.youtube.com/@qhseacademieandconsulting', '_blank');
   };
-
-  useEffect(() => {
-    dispatch(getCartTotal());
-  }, [carts, dispatch]);
-
+  const handleIconClick2 = () => {
+    window.open(
+      'https://www.linkedin.com/in/ing-yvan-watbo-%E2%9C%85/',
+      '_blank'
+    );
+  };
+  const handleIconClick3 = () => {
+    window.open('https://wa.me/+237694289819', '_blank');
+  };
+  const [showMenu, setShowMenu] = useState(false);
   return (
-    <nav className='navbar'>
-      <div className='navbar-cnt flex align-center'>
-        <div>
-          <button
-            type='button'
-            className='sidebar-show-btn text-white flex-start'
-            onClick={() => dispatch(setSidebarOn())}>
-            <i className='fas fs-25 fa-bars'></i>
-            <p className='text-base'>Catalogue</p>
-          </button>
-        </div>
-        <div className='navbar-collapse w-100'>
-          <div className='navbar-search bg-white'>
-            <div className='flex align-center'>
-              <input
-                type='text'
-                className='form-control fs-14'
-                placeholder='Recherchez vos produits ici'
-                onChange={(e) => handleSearchTerm(e)}
-              />
+    <div className='w-full h-24 sticky top-0 z-50 bg-bodyColor mx-auto flex justify-between items-center font-titleFont border-b-[1px] border-b-gray-600'>
+      <div>
+        <img src={logo} alt='logo' />
+      </div>
+      <div>
+        <ul className='hidden mdl:inline-flex items-center gap-6 lg:gap-10'>
+          {navLinksdata.map(({ _id, title, link }) => (
+            <li
+              className='text-base font-normal text-gray-400 tracking-wide cursor-pointer hover:text-designColor duration-300'
+              key={_id}>
               <Link
-                to={`search/${searchTerm}`}
-                className='text-white search-btn flex align-center justify-center'>
-                <i className='fa-solid fa-magnifying-glass'></i>
+                activeClass='active'
+                to={link}
+                spy={true}
+                smooth={true}
+                offset={-40}
+                duration={500}>
+                {title}
               </Link>
+            </li>
+          ))}
+        </ul>
+        <span
+          onClick={() => setShowMenu(!showMenu)}
+          className='text-xl mdl:hidden bg-black w-10 h-10 inline-flex items-center justify-center rounded-full text-designColor cursor-pointer'>
+          <FiMenu />
+        </span>
+        {showMenu && (
+          <div className='w-[80%] h-screen overflow-scroll absolute top-0 left-0 bg-gray-900 p-4 scrollbar-hide'>
+            <div className='flex flex-col gap-4 py-2 relative'>
+              <div>
+                <img className='w-32' src={logo} alt='logo' />
+                <p className='text-sm text-gray-400 mt-2'>
+                  Si vous cherchez à améliorer votre performance, je suis là
+                  pour vous aider. Je vous propose une consultation
+                  personnalisée pour discuter de vos besoins spécifiques et
+                  trouver des solutions adaptées .
+                </p>
+              </div>
+              <ul className='flex flex-col gap-4'>
+                {navLinksdata.map((item) => (
+                  <li
+                    key={item._id}
+                    className='text-base font-normal text-gray-400 tracking-wide cursor-pointer hover:text-designColor duration-300'>
+                    <Link
+                      onClick={() => setShowMenu(false)}
+                      activeClass='active'
+                      to={item.link}
+                      spy={true}
+                      smooth={true}
+                      offset={-70}
+                      duration={500}>
+                      {item.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <div className='flex flex-col gap-4'>
+                <h2 className='text-base uppercase font-titleFont mb-4'>
+                  Retrouvez-moi
+                </h2>
+                <div className='flex gap-4 pt-5'>
+                  <span className='bannerIcon' onClick={handleIconClick3}>
+                    <FaWhatsapp />
+                  </span>
+                  <span className='bannerIcon' onClick={handleIconClick}>
+                    <FaYoutube />
+                  </span>
+                  <span className='bannerIcon' onClick={handleIconClick2}>
+                    <FaLinkedinIn />
+                  </span>
+                </div>
+              </div>
+              <span
+                onClick={() => setShowMenu(false)}
+                className='absolute top-4 right-4 text-gray-400 hover:text-designColor duration-300 text-2xl cursor-pointer'>
+                <MdClose />
+              </span>
             </div>
           </div>
-
-          <ul className='navbar-nav flex align-center fs-12 fw-4 font-manrope'>
-            {
-              // taking only first 8 categories
-              categories.slice(0, 8).map((category, idx) => (
-                <li className='nav-item no-wrap' key={idx}>
-                  <Link
-                    to={`category/${category}`}
-                    className='nav-link text-capitalize'>
-                    {category.replace('-', ' ')}
-                  </Link>
-                </li>
-              ))
-            }
-          </ul>
-        </div>
-
-        <div className='navbar-cart flex align-center'>
-          <Link to='/cart' className='cart-btn'>
-            <i className='fa-solid fa-cart-shopping'></i>
-            <div className='cart-items-value'>{itemsCount}</div>
-            <CartModal carts={carts} />
-          </Link>
-        </div>
+        )}
       </div>
-    </nav>
+    </div>
   );
 };
 
